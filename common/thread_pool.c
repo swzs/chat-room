@@ -9,6 +9,7 @@
 
 void do_work(struct User *user){
     //
+    //收到一条信息，并打印。
     DBG("In do_work %s\n", user->name);
 }
 

@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
     struct task_queue redQueue;
     struct task_queue blueQueue;
 
-    pthread_create(&ret_t, NULL, sub_reactor, (void *)&redQueue);
+    pthread_create(&red_t, NULL, sub_reactor, (void *)&redQueue);
     pthread_create(&blue_t, NULL, sub_reactor, (void *)&blueQueue);
     
     struct epoll_event ev, events[MAX * 2];
@@ -93,9 +93,10 @@ int main(int argc, char **argv) {
             struct User user;
             char buff[512] = {0};
             if (events[i].data.fd == listener) {
-                //先只收数据
-                recvfrom(listener, buff, sizeof(buff), 0, (struct sockaddr *)&client, &len);
-                DBG(RED"Recv"NONE" :<%s:%d> %s \n", inet_ntoa(client.sin_addr), client.sin_port, buff);
+                int new_fd = udp_accept(listener, &user);
+                if (new_fd > 0) {
+                //    add_to_sub_reactor(&user);
+                }
             }
         }
 
