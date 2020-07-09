@@ -8,7 +8,8 @@
 #ifndef _DATATYPE_H
 #define _DATATYPE_H
 
-#define MAX 11 
+#define MAX 300 //用户数的二分之一
+#define NTHREAD 3
 
 struct Score {
     int red;

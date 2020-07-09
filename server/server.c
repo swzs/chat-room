@@ -12,9 +12,11 @@ struct Bpoint ball; //球的位置
 struct BallStatus ball_status; //球的状态
 struct Score score;
 int repollfd, bepollfd;
+struct User *rteam, *bteam;
 
 int main(int argc, char **argv) {
     int opt, port = 0, listener, epollfd;
+    pthread_t red_t, blue_t;
     while ((opt = getopt(argc, argv, "p:")) != -1) {
         switch (opt) {
             case 'p':
@@ -49,6 +51,9 @@ int main(int argc, char **argv) {
 
     DBG(GREEN"INFO"NONE" : Server start On port %d.\n", port);
 
+    rteam = (struct User *)calloc(MAX, sizeof(struct User));
+    bteam = (struct User *)calloc(MAX, sizeof(struct User));
+
     epollfd = epoll_create(MAX * 2);
     repollfd = epoll_create(MAX);
     bepollfd = epoll_create(MAX);
@@ -57,7 +62,13 @@ int main(int argc, char **argv) {
         perror("epoll_create()");
         exit(1);
     }
+    
+    struct task_queue redQueue;
+    struct task_queue blueQueue;
 
+    pthread_create(&ret_t, NULL, sub_reactor, (void *)&redQueue);
+    pthread_create(&blue_t, NULL, sub_reactor, (void *)&blueQueue);
+    
     struct epoll_event ev, events[MAX * 2];
     ev.events = EPOLLIN;
     ev.data.fd = listener;

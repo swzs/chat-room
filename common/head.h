@@ -41,4 +41,6 @@
 #include "datatype.h"
 #include "udp_server.h"
 #include "udp_client.h"
+#include "thread_pool.h"
+#include "sub_reactor.h"
 #endif
