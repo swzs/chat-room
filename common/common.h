@@ -8,7 +8,6 @@
 #ifndef _COMMON_H
 #define _COMMON_H
 
-char conf_ans[50] = {0};
 char *get_conf_value(const char *path, const char *key);
 int socket_create(int port);
 void make_block(int fd);

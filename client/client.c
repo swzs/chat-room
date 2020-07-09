@@ -6,8 +6,6 @@
  ************************************************************************/
 
 #include "head.h"
-#include "common.h"
-#include "color.h"
 
 int server_port = 0;
 char server_ip[20] = {0};
@@ -15,6 +13,7 @@ int team = -1;
 char name[20] = {0};
 char log_msg[512] = {0};
 char *conf = "./football.conf";
+int sockfd = -1;
 
 int main(int argc, char **argv) {
     int opt;
@@ -41,10 +40,6 @@ int main(int argc, char **argv) {
         }
     }
     
-        DBG("ERROR\n");
-    if (get_conf_value(conf, "NAME") == NULL) {
-        DBG("ERROR\n");
-    }
 
     if (!server_port) server_port = atoi(get_conf_value(conf, "SERVERPORT"));
     if (!team) team = atoi(get_conf_value(conf, "TEAM"));
@@ -55,6 +50,20 @@ int main(int argc, char **argv) {
 
     DBG("<"GREEN"Conf Show"NONE"> : server_ip = %s, port = %d, team = %s, name = %s\n%s",\
         server_ip, server_port, team ? "BLUE": "RED", name, log_msg);
+
+    struct sockaddr_in server;
+    server.sin_family = AF_INET;
+    server.sin_port = htons(server_port);
+    server.sin_addr.s_addr = inet_addr(server_ip);
+
+    socklen_t len = sizeof(server);
+
+    if ((sockfd = socket_udp()) < 0) {
+        perror("socket_udp()");
+        exit(1);
+    }
+    
+    sendto(sockfd, log_msg, strlen(log_msg), 0, (struct sockaddr *)&server, len);
 
     return 0;
 }

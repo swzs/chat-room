@@ -7,7 +7,7 @@
 
 #include "head.h"
 
-extern char* conf_ans;
+extern char conf_ans[50];
 
 int socket_create(int port) {
     int sockfd;
@@ -61,12 +61,9 @@ char *get_conf_value(const char *path, const char *key) {
     }
     while ((nrd = getline(&line, &len, fp)) != -1) {
         if ((sub = strstr(line, key)) == NULL) continue;
-        printf("After strstr!\n");
         if (line[strlen(key)] == '=') {
-            printf("Before strncpy!\n");
-            strncpy(conf_ans, sub + strlen(key) + 1, nrd - strlen(key) - 1);
+            strncpy(conf_ans, sub + strlen(key) + 1, nrd - strlen(key) - 2);
             *(conf_ans + nrd - strlen(key) -2) = '\0';
-            printf("After strncpy!\n");
             break;
         } 
     }
