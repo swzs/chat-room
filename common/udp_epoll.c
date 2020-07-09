@@ -6,11 +6,12 @@
  ************************************************************************/
 
 #include "head.h"
+extern int port;
 
 int udp_connect(struct sockaddr_in *client) {
     int sockfd;
-    if ((sockfd = socket_udp()) < 0) {
-        perror("socket_udp");
+    if ((sockfd = socket_create_udp(port)) < 0) {
+        perror("socket_create_udp");
         return -1;
     }
     if (connect(sockfd, (struct sockaddr *)client, sizeof(struct sockaddr)) < 0) {

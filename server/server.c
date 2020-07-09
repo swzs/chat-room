@@ -1,4 +1,6 @@
 /*************************************************************************
+:Q
+:q
 	> File Name: server.c
 	> Author: suyelu 
 	> Mail: suyelu@126.com
@@ -13,9 +15,10 @@ struct BallStatus ball_status; //球的状态
 struct Score score;
 int repollfd, bepollfd;
 struct User *rteam, *bteam;
+int port = 0;
 
 int main(int argc, char **argv) {
-    int opt, port = 0, listener, epollfd;
+    int opt, listener, epollfd;
     pthread_t red_t, blue_t;
     while ((opt = getopt(argc, argv, "p:")) != -1) {
         switch (opt) {
