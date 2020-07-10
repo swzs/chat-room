@@ -16,6 +16,9 @@ struct Score score;
 int repollfd, bepollfd;
 struct User *rteam, *bteam;
 int port = 0;
+pthread_mutex_t rmutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t bmutex = PTHREAD_MUTEX_INITIALIZER;
+
 
 int main(int argc, char **argv) {
     int opt, listener, epollfd;
@@ -68,6 +71,9 @@ int main(int argc, char **argv) {
     
     struct task_queue redQueue;
     struct task_queue blueQueue;
+    
+    task_queue_init(&redQueue, MAX, repollfd);
+    task_queue_init(&blueQueue, MAX, bepollfd);
 
     pthread_create(&red_t, NULL, sub_reactor, (void *)&redQueue);
     pthread_create(&blue_t, NULL, sub_reactor, (void *)&blueQueue);
@@ -85,8 +91,10 @@ int main(int argc, char **argv) {
     bzero(&client, sizeof(client));
     socklen_t len = sizeof(client);
 
+    //mZignal(SIGINT, logout);
+
     while (1) {
-        DBG(YELLOW"Main Reactor"NONE" : Waiting for clienti.\n");
+        DBG(YELLOW"Main Reactor"NONE" : Waiting for client.\n");
         int nfds = epoll_wait(epollfd, events, MAX * 2, -1); 
         if (nfds < 0) {
             perror("epoll_wait()");
@@ -98,7 +106,7 @@ int main(int argc, char **argv) {
             if (events[i].data.fd == listener) {
                 int new_fd = udp_accept(listener, &user);
                 if (new_fd > 0) {
-                //    add_to_sub_reactor(&user);
+                    add_to_sub_reactor(&user);
                 }
             }
         }
